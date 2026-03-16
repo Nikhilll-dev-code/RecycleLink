@@ -1,0 +1,14 @@
+{
+  "name": "recyclelink",
+  "version": "1.0.0",
+  "description": "RecycleLink – On-Demand Resource Recovery Platform",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down"
+  }
+}
