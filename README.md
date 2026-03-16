@@ -1,115 +1,257 @@
-# RecycleLink – MVP (MongoDB Edition)
+# ♻️ RecycleLink
 
-**On-Demand Resource Recovery Platform | Q3 2026**
+**An On-Demand Resource Recovery Platform**
 
-RecycleLink is an "Uber for recycling." It connects residents looking to dispose of recyclable materials (like E-Waste, Plastic, Metal) with drivers who conduct pickups. Residents earn reward points (Eco-Points or payouts) based on the actual weight of the material diverted from landfills, addressing EPR (Extended Producer Responsibility) compliance, fleet tracking, and gamification of recycling.
+RecycleLink is a full-stack application designed to simplify and incentivize recycling.
+It connects **residents who want to dispose of recyclable materials** with **drivers who collect and process them**, while providing **real-time fleet tracking and administrative analytics**.
 
----
-
-## Architecture & Features
-
-### Core Stack
-- **Frontend**: React + Vite (High-performance single-page application)
-- **Backend**: Node.js + Express (API server handling business logic)
-- **Database**: MongoDB & Mongoose (Non-relational storage)
-- **Authentication**: JWT (JSON Web Token) secures API routes with role-based authorization.
-- **Realtime Tracking**: WebSockets broadcast driver locations to the admin dashboard.
-- **Maps**: Google Maps API provides location pinning and real-time fleet map for admins.
-- **QR Verification**: Unique QR code generated on pickup creation, scanned as proof-of-pickup.
-
-### Role Breakdown
-- **Resident**: Schedule pickups, view history & rewards, generate QR code for verification.
-- **Driver**: View assigned route, navigate to residents, scan QR code & enter actual weight.
-- **Admin**: Monitor fleet (real-time WebSocket maps), dispatch drivers, view aggregations & SWM compliance.
+The goal is to make recycling **more accessible, traceable, and rewarding**, while supporting **Extended Producer Responsibility (EPR)** and sustainable waste management practices.
 
 ---
 
-## Quick Start (Local Development)
+# 🚀 Features
 
-**1. Start MongoDB locally** (requires MongoDB 6+ installed)
-```bash
-mongod --dbpath /data/db
-# No schema migration needed — Mongoose creates collections automatically
+### 👤 Resident
+
+* Schedule recyclable material pickups
+* Track pickup history
+* Generate QR code for pickup verification
+* Earn **Eco-Points** based on material weight
+
+### 🚚 Driver
+
+* View assigned pickup routes
+* Navigate to resident locations
+* Scan QR codes to verify pickups
+* Submit actual weight collected
+
+### 🛠 Admin
+
+* Monitor driver fleet in real time
+* Assign drivers to pickup requests
+* View recycling analytics and reports
+* Track sustainability metrics
+
+---
+
+# 🧰 Tech Stack
+
+### Frontend
+
+* **React**
+* **Vite**
+* **Axios**
+* **Google Maps API**
+
+### Backend
+
+* **Node.js**
+* **Express.js**
+* **MongoDB**
+* **Mongoose**
+
+### Other Technologies
+
+* **JWT Authentication**
+* **WebSockets** (Real-time driver tracking)
+* **QR Code verification**
+* **Role-based access control**
+
+---
+
+# 🏗 System Architecture
+
+```
+Frontend (React + Vite)
+        │
+        │ REST API + WebSockets
+        ▼
+Backend (Node.js + Express)
+        │
+        ▼
+MongoDB Database
 ```
 
-**2. Backend**
-```bash
-cd backend
-npm install
-# Ensure you copy .env.example to .env and set MONGO_URI and JWT_SECRET
-npm run seed  # Generates required mock users
-npm run dev
-# API running at http://localhost:3001
-```
+The backend manages:
 
-**3. Frontend** (Requires `VITE_GOOGLE_MAPS_API_KEY` in `frontend/.env`)
-```bash
-cd frontend
-npm install
-npm run dev
-# App running at http://localhost:5173
-```
+* Authentication
+* Pickup requests
+* Driver routing
+* Reward calculation
+* Real-time fleet updates
 
 ---
 
-## Demo Accounts (Login via Demo Buttons)
-
-- Admin: `admin@recyclelink.com` | `admin123`
-- Driver: `driver@recyclelink.com` | `driver123`
-- Resident: `resident@recyclelink.com` | `resident123`
-
-*(Quick-Demo buttons are also available on the Auth screen directly!)*
-
----
-
-## Project Structure
+# 📂 Project Structure
 
 ```
 recyclelink/
-├── README.md
-├── package.json
-├── .gitignore
+│
 ├── backend/
-│   ├── server.js              ← Express + WebSocket + MongoDB connect
-│   ├── package.json           ← express, mongoose, jsonwebtoken, ws
 │   ├── db/
-│   │   └── connect.js         ← Mongoose database connection
-│   ├── models/                ← Mongoose schemas (User, Driver, PickupRequest, Reward, Route)
-│   ├── middleware/            ← Custom JWT and Auth guards
-│   └── routes/                ← API routes (auth, pickups, driver, admin)
+│   │   └── connect.js
+│   ├── middleware/
+│   │   └── auth.js
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Driver.js
+│   │   ├── PickupRequest.js
+│   │   ├── Reward.js
+│   │   └── Route.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── pickups.js
+│   │   ├── driver.js
+│   │   └── admin.js
+│   ├── seed.js
+│   └── server.js
+│
 └── frontend/
     ├── index.html
     ├── vite.config.js
-    ├── package.json
     └── src/
-        ├── main.jsx
-        ├── index.css
-        ├── App.jsx
-        ├── components/        ← MapView, QRScanner, Layouts
-        ├── context/           ← AuthContext for global state
-        ├── pages/             ← AdminDashboard, DriverDashboard, ResidentDashboard, Auth
-        └── services/          ← Axios instance, WebSockets
+        ├── components/
+        ├── context/
+        ├── pages/
+        └── services/
 ```
 
 ---
 
-## API Reference Overview
+# ⚙️ Installation & Setup
 
-- **Auth**: `POST /api/register`, `POST /api/login`
-- **Resident Pickups**: `POST /api/pickups`, `GET /api/pickups/user`
-- **Driver**: `GET /api/driver/routes`, `POST /api/driver/verify` (QR scanning logic and actual weight mapping)
-- **Admin**: `GET /api/admin/fleet`, `GET /api/admin/analytics`, `POST /api/admin/assign`
-- **WebSockets**: WSS running alongside the node app, passing `LOCATION_UPDATE` from drivers to `DRIVER_LOCATION` events for admins.
+## 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/yourusername/recyclelink.git
+cd recyclelink
+```
 
 ---
 
-## Reward Point Rates
+## 2️⃣ Backend Setup
 
-| Category | Points / kg | Payment (₹ / kg) |
-|----------|-------------|------------------|
-| E-Waste  | 50          | 5.00             |
-| Metal    | 30          | 3.00             |
-| Plastic  | 15          | 1.50             |
-| Glass    | 10          | 1.00             |
-| Paper    |  8          | 0.80             |
-| Organic  |  5          | 0.50             |
+```bash
+cd backend
+npm install
+```
+
+Create `.env`
+
+```
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_secret_key
+```
+
+Run server:
+
+```bash
+npm run seed
+npm run dev
+```
+
+Backend runs at:
+
+```
+http://localhost:3001
+```
+
+---
+
+## 3️⃣ Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+Create `.env`
+
+```
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+```
+
+Run frontend:
+
+```bash
+npm run dev
+```
+
+Frontend runs at:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 👥 Demo Accounts
+
+| Role     | Email                                                       | Password    |
+| -------- | ----------------------------------------------------------- | ----------- |
+| Admin    | [admin@recyclelink.com](mailto:admin@recyclelink.com)       | admin123    |
+| Driver   | [driver@recyclelink.com](mailto:driver@recyclelink.com)     | driver123   |
+| Resident | [resident@recyclelink.com](mailto:resident@recyclelink.com) | resident123 |
+
+---
+
+# 📊 Reward System
+
+| Material | Points / kg | Payment |
+| -------- | ----------- | ------- |
+| E-Waste  | 50          | ₹5.00   |
+| Metal    | 30          | ₹3.00   |
+| Plastic  | 15          | ₹1.50   |
+| Glass    | 10          | ₹1.00   |
+| Paper    | 8           | ₹0.80   |
+| Organic  | 5           | ₹0.50   |
+
+Residents earn points or payouts based on the **actual weight of recyclable materials collected**.
+
+---
+
+# 🔐 Authentication & Security
+
+* JWT based authentication
+* Role-based route protection
+* Secure API endpoints
+* Middleware validation
+
+---
+
+# 📡 Real-Time Features
+
+Drivers broadcast location updates using **WebSockets**, allowing the admin dashboard to display:
+
+* Live driver positions
+* Active pickup routes
+* Fleet monitoring
+
+---
+
+# 🌍 Future Improvements
+
+* Mobile app (React Native)
+* AI route optimization
+* Payment gateway integration
+* Smart recycling bin integration
+* Carbon footprint analytics
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+Feel free to fork the repository and submit pull requests.
+
+---
+
+# 📜 License
+
+This project is released under the **MIT License**.
+
+---
+
+# 👨‍💻 Author
+
+Built as a sustainability-focused full-stack project exploring **real-time systems, logistics, and environmental impact through technology**.
